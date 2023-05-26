@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock title %}
+
+{% block body %}
+<div class="container-fluid my-4 px-0">
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active ">
+        <img src="static/img/CafeIn.png" class="d-block w-100" alt="..." height="500">
+      </div>
+      <div class="carousel-item">
+        <img src="https://source.unsplash.com/2100x800/?beverage" class="d-block w-100" alt="...">
+      </div>
+      <div class="carousel-item">
+        <img src="https://source.unsplash.com/2100x800/?food" class="d-block w-100" alt="...">
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>   
+</div>
+  
+{% comment %} Cards {% endcomment %}
+<div class="container px-500">
+<h1><center>Select from the range of exciting products !!!</h1>   
+   {% for i in product %}
+        <div class="col my-5 align-item-center">
+          <div class="card shadow-sm">
+            <img src="{{i.image}}" height="400" width="500">
+
+            <div class="card-body">
+              <p class="card-text"><h1>{{i.product_name}}</h1>{{i.product_desc}}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Rs. {{i.price}}</small>
+                <div class="btn-group">
+                  <span id="divpr{{i.id}}" class="divpr">
+                  <button type="button" id="pr{{i.id}}" class="btn btn-primary cart">Add To Cart</button></span> 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  {% endfor %}
+{% endblock body %}
+
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+  if(localStorage.getItem('cart') == null)
+     {
+       var cart = {};
+     }
+   else
+     {
+       cart = JSON.parse(localStorage.getItem('cart'));
+       updatecart(cart);
+     }  
+$('.cart').click(function()
+  {
+    var idstr = this.id.toString();
+    if(cart[idstr]!=undefined)
+      {
+        cart[idstr]=cart[idstr]+1;
+      }
+    else
+      {
+        cart[idstr]=1;
+      }  
+    updatecart(cart);  
+  });
+  
+  function updatecart(cart)
+    {
+      for (var item in cart) {
+        document.getElementById('div' + item).innerHTML = "<button id='minus" + item + "' class='btn btn-primary minus'>-</button> <span id='val" + item + "''>" + cart[item] + "</span> <button id='plus" + item + "' class='btn btn-primary plus'> + </button>";
+      }  
+    localStorage.setItem('cart',JSON.stringify(cart));  
+    document.getElementById('cart').innerHTML = Object.keys(cart).length; //Count no. of items in cart         
+    console.log(cart);  
+    }
+  
+  $('.divpr').on("click", "button.minus", function() {
+    a = this.id.slice(7, );
+    cart['pr' + a] = cart['pr' + a] - 1;
+    cart['pr' + a] = Math.max(0, cart['pr' + a]);
+    document.getElementById('valpr' + a).innerHTML = cart['pr' + a];
+    updatecart(cart);
+});
+$('.divpr').on("click", "button.plus", function() {
+    a = this.id.slice(6, );
+    cart['pr' + a] = cart['pr' + a] + 1;
+    document.getElementById('valpr' + a).innerHTML = cart['pr' + a];
+    updatecart(cart);
+});
+</script>
+{% endblock js %}
